@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Just for You ♡</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Italianno&family=Quicksand:wght@400;600&display=swap');
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: #fff0f5;
+      font-family: 'Quicksand', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .screen {
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .active {
+      display: flex;
+    }
+
+    h1,
+    h2 {
+      font-family: 'Italianno', cursive;
+      font-size: 3rem;
+      color: #d36c9e;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 24px;
+      margin: 10px;
+      background-color: #fcd6e2;
+      border: 2px dashed #d36c9e;
+      border-radius: 30px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #fcbad3;
+    }
+
+    .moods button {
+      display: block;
+      width: fit-content;
+    }
+
+    .letter {
+      max-width: 90vw;
+      max-height: 80vh;
+      overflow-y: auto;
+      background: #fffafa;
+      border: 2px dashed #d36c9e;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
+      font-family: 'Quicksand', sans-serif;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      position: relative;
+      animation: fadeIn 0.6s ease;
+      text-align: left;
+      white-space: pre-wrap;
+      height: auto;
+      width: 80vw; /* Larger box size */
+    }
+
+    .letter::before {
+      content: '💌';
+      font-size: 2rem;
+      position: absolute;
+      top: -25px;
+      left: 20px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity:0 }
+     to  { opacity: 1 }
+      }
+
+    .sparkle {
+      position: fixed;
+      width: 20px;
+      height: 20px;
+      background-image: url('https://cdn-icons-png.flaticon.com/512/6420/6420762.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      pointer-events: none;
+      animation: sparkle 3s linear infinite;
+    }
+
+    @keyframes sparkle {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(100vh) scale(1.5); opacity: 0; }
+    }
+
+
+      to {
+        opacity: 1
+      }
+  repeat;
+      pointer-events: none;
+      animation: sparkle 3s linear infinite;
+      z-index: 999;
+    }
+
+    @keyframes sparkle {
+      0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateY(100vh) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    .prohibited img {
+      max-width: 250px;
+      margin-top: 20px;
+    }
+
+    /* Envelope animation */
+    .envelope {
+      width: 200px;
+      height: 150px;
+      background: #fcd6e2;
+      border: 2px solid #d36c9e;
+      position: relative;
+      transform: scale(1);
+      transition: transform 0.6s ease;
+      cursor: pointer;
+    }
+
+    .envelope:before,
+    .envelope:after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+    }
+
+    .envelope:before {
+      top: -1px;
+      left: 0;
+      border-width: 0 100px 75px 100px;
+      border-color: transparent transparent #fcd6e2 transparent;
+    }
+
+    .envelope.open {
+      transform: scale(1.2);
+    }
+
+    .envelope.open:before {
+      border-color: transparent transparent #fff0f5 transparent;
+    }
+
+    #envelopeContainer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      gap: 20px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="start" class="screen active">
+    <h1>Are you alone?</h1>
+    <button onclick="goToMood()">Yes</button>
+    <button onclick="showProhibited()">No</button>
+  </div>
+
+  <div id="prohibited" class="screen prohibited">
+    <h1>Come back when you're alone ♡</h1>
+    <img src="https://www.shutterstock.com/shutterstock/photos/59735371/display_1500/stock-photo-icon-gugu-showing-a-stop-sign-59735371.jpg" alt="Entry Prohibited">
+  </div>
+
+  <div id="mood" class="screen">
+    <h1>Hii, how are you feeling today?</h1>
+    <div class="moods">
+      <button onclick="prepareEnvelope('happyy')">happyy ♡</button>
+      <button onclick="prepareEnvelope('surreal')">surreal ♡</button>
+      <button onclick="prepareEnvelope('lonely')">lonely: virtual hugs ♡</button>
+      <button onclick="prepareEnvelope('worthless')">contemplating self worth? ♡</button>
+    </div>
+  </div>
+
+  <div id="envelopeScreen" class="screen">
+    <div id="envelopeContainer">
+      <div class="envelope" onclick="openEnvelope()"></div>
+      <p>Click to open your letter 💌</p>
+    </div>
+  </div>
+
+  <div id="letterScreen" class="screen">
+    <div class="letter" id="letterContent"></div>
+  </div>
+
+  <script>
+    let selectedMood = '';
+
+    function goToMood() {
+      document.getElementById('start').classList.remove('active');
+      document.getElementById('mood').classList.add('active');
+    }
+
+    function showProhibited() {
+      document.getElementById('start').classList.remove('active');
+      document.getElementById('prohibited').classList.add('active');
+    }
+
+    const letters = {
+      happyy: `Heyy lovee,
+
+hiii baba today was amazinngg, wasn't it?!! im just imagining you to be all smiles behind the screen rn and just so you know, you deserve this, and 10000x more. depending on when you're reading this, we probably do or don't meet that often. whatever that is, pleaseeeee text me and tell me alll about your dayyy. tell me every little thing about today, alr?? there's really nothing i enjoy more than listening to your cute little rants especially when you're this happyyy. if you're too exhausted from all of today's shenanigans, then just text me tomorrow okay?? Just text me soooon tho okay I miss your dumbass 😿😿 I can't wait to hear all about what's left you feeling all fuzzy. okay bye, ilysm and ur gay.
+this is you btw:   🐸 
+
+Love, gay idiot♡` ,
+
+      surreal: `Blue blue sky,
+
+Ahh, it's one of those days isn't it?
+Where all your senses are in overdrive and you're filled with this overwhelming gratitude for being alive. sounds gay asf but, i am also overwhelmingly grateful about your dumbass being alive.
+yk, to this day, the day we became friends is one of the most surreal experiences for me. i know i know, i end up saying this is in every single birthday letter I write to you, this is the last i swear (it's not).
+i make a lot of stupid, impulsive decisions i regret, ofc that isn't news to you. in fact, telling a random girl who was showing me her (beautiful) writing about a dude who can't walk like a human being (lmao can you imagine) about my biggest secret was probably the most impulsive of them all. but somehow, it was the farthest thing from regretful, and probably the best decision I've ever made.
+a girl, who was made from all the best parts of myself combined with all the best things in this world, sat two benches away from me and I went a whole year not knowing about it. its scary to think that had I been thinking rationally in that one moment, i would've missed out on the best thing that's ever happened to me. i know you'd probably smack me on the head for the stupid impulsive decisions that I make now (present tense bec im assuming even if you read it like years from now njn probably nannayitt indavilla), but if not for my stupid impulses i wouldn't have you. and I cannot even imagine how I'd have survived this long like that.
+the long talks at aasanathil thamara, were probably the best parts of my life at school  in the past 2 years yk? it was one of those moments, that after a long long day of functioning robotically, would finally make me feel human again. would make me realize that I am in fact very much alive.
+the laughters that stemmed from actual joy and were not just fillers in polite conversation, the jokes that arose from shared experiences and understanding and not just virality on the internet and the words that came from the person who I was, and not the person who I wanted people to think i was. feelings that would make me think, "so the songs were never lying this whole time".
+i was always a feeler, always felt so many things, good or bad. but with you, you made me feel different things, new things.. real things.
+very very gay but you've filled this gaping void in my life that I never even knew was there yk? as a kid i remember wanting one of those friendships from the books where they'd stand by each other and always have each other's backs. i tried to look for that in every friendship that came my way, but time and time again I was hurt, betrayed and forgotten. but then I met you, dumbass, and i think I've finally got what little kp always dreamed about. i probably don't show it all especially these days but I am actually so so so grateful for whatever crazy butterfly effect lead to me meeting you. i think you're worth all the heartbreaks and broken friendships I've had in my life. and I'd do it all again for your stupid ass.
+(BAHAHAHA i just hit the maximum limit for text characters in this note lmao i had to move everything separately fml)
+anyway
+yk the necklace you gave me on my bday?? i think it's been about a week since I got it now but I haven't taken it off since bro I love it sm.
+weeee
+im actually gonna say something super schizophrenic but the other day I was talking to myself and I made this stupid ass joke in my head that I was sure you'd love (i forget what it was exactly but it was something to do with sigmund freud) and I missed you just a little more, wishing we could've laughed together hehehe
+ok i think I have sufficiently made this gay enough, i hope my homosexually charged rants did not dampen your sudden excitement to be alive. ok. i love you. muah. take care 
+
+Love, ocean ♡` ,
+
+      lonely: `Oi dumbass,
+
+ayo whatchu feeling lonely for when im right here smh smh >:(
+okay, so jokes aside, youre an idiot for feeling lonely youve no idea what ur dumbass means to me
+idk if you remember this, but the very first time that I ever felt "seen" was during a conversation with you.
+okay, so it was the day in 11th grade when they made me do extempore and I stopped midway bec i didn't do good enough. i came back out, i started crying in your arms, and we had a very long conversation. towards the end, you managed to cheer me up like you always do, but you said this one little thing in passing that really stuck with me.
+you said "everytime you achieve something everyone always dismissed it saying, ah it's just kp, and for a while I did too. but once I got to know you, i realised you actually work really hard for the things that you accomplish, and I feel genuinely proud of you". you said it, and then continued saying something else but at that moment let me tell you, i felt so seen. i felt like all my guards had been broken down in an instant. i felt so vulnerable, like I've never felt before. and for the first time in my life, i had let someone in. well, i didn't, you practically barged your way in through my walls with a bulldozer. but, i know with certainty that in that moment i felt like maybe all the suffering was worth it in the end. and ever since then, you've never made me doubt that.
+Since the day I met you, you've always been a constant in my life. i like to think of you as the little angel on my shoulder that's constantly reprimanding me for my dumbassery. i thought it was because we met every day, spent hours just talking by the aasanathil thamara. i mean, of course you were a constant in my life, i couldn't even go a day without talking to you, right? wrong.
+Remember the days during the model exams? We hadn't talked properly at all in the prior weeks. Throughout this period i felt like a woman half baked. Like everything was right there, yet there was something that kept me from feeling complete. That was, until the models week and we started talking all over again just like before. and then it hit me, absolutely nothing had changed. Of course i won't deny how great it felt to just talk to you in person again, but all this while I had never been alone in the first place. you were always right there. even when we didn't talk for weeks, even when i hadn't left my room or taken my head out of the books for days, i was never alone. you were always right there. and you always were going to be. it was then that it became absolutely certain to me that even when I'm going through the happiest days of my life, or the most hellish, im never going to go through it alone. you're always going to be right there with me, even if we're miles apart. and ever since then, I've never ever felt lonely (honestly bro trust).
+you're always going to make me smile a little wider at my happiest, and cry a little less at worst just by existing alongside me yk? i could always just collapse at any given point and I know you'd be right behind me and that you'd catch me, no questions asked. i didn't need to see you everyday for you to be my bestfriend. you just have to exist with me. (hehehe gay)
+i hope that you know that I'd do it all for you in a heartbeat. i hope you know that no matter where you go or who you're with, I'll always be right there with you okay? I'll watch your happiness from the sidelines or I'll come tackle you in a hug. I'll be wherever you need me to, and whenever you need me. not like you have a choice at this rate, but I'm just reminding you again. i don't know what has happened that made you feel lonely today, since you're reading this, but I'm right here baba. just give me call okay? i hope that I can alleviate your loneliness as much as you've done mine, and I hope i can be there for you in all the ways you've done for me and more.
+yk if i could compare you to a thing, id probably say this really fluffy blanket i own. (hear me out before you judge it's not that bad i swear😭)
+so I've had this blanket since I was little, it's really warm and fluffy. its always been so comforting to me. on rainy days I would just snuggle up inside it, and I'd be so warm and cozy against the chilly weather. on hot days, the ac would be on full blast and I'd be freezing, so there I was again, snuggled up inside the warm blanket. whenever I was sad I'd want to be by myself and cry and guess where my favourite hiding spot was? ding ding ding! 🔔 I've made fortresses with it, I've been rolled up into a burrito with it, and I'm actually in the exact blanket right now as I'm writing this. basically, I've lived a thousand lifetimes with this blanket, and it has brought me nothing but warmth and comfort in each one. and that is what your gay ass has done as well.
+you've said this yourself, but I'll say it again, im a chronic disease you've contracted, so don't have any hopes of getting rid of me anytime soon. I'm always going to be right here, whether you realize it or not. for now, im so so so sorry I can't be right next to you. but please adjust by giving the babie (the plushie) a little hug okay? just this once🥹 i can't wait to talk to you again bro🥹 
+
+Love, rat♡` ,
+
+      worthless: `Hello dearest,
+
+im so sorry love
+im so sorry for what happened today
+i know you think this is your fault, but that couldn't be farther from the truth. i want you to read through this whole thing before you let a single self blaming thought cross your mind.
+Alright.
+Anytime you sit and think that you're not good enough, just please, think of me. Think of all the times you've been so incredibly strong, for me and for yourself.
+I cannot even begin to explain how much you mean to me. Sometimes I really think that if not for you, i probably would've stayed 16 forever. but you saved me, you brought me here. you're the reason I'm happy today. Not just my happiness love, your happiness as well. you've been doing so good lately, you've been taking care of yourself so well, you've been working hard, all by yourself. do you really think it's fair to penalize yourself for one mistake while you stand on a mountain of your good deeds and kindness?
+do you know what an incredible human being you are and how much of an impact you make in the lives of people around you? do you know that I've never ever met someone who cares as much as you do? 
+you've always managed to help people even at the cost of your own well being(adi kittathente kurava😾)
+i highly doubt that a 15 year old you would ever be able to imagine that there would come a point in her life where she would completely stop being destructive towards herself, but less than a year later, you were able to do it! you pulled a struggling me and a struggling you out of our pain. do you even realize the immense strength it takes to do something like that? and you did that all by yourself.
+you were a strong, strong little girl and you always had been, even when you didn't need to be. but now you're an even stronger woman, can you even imagine how much you're capable of?
+you're also the kindest, most compassionate human I've ever encountered in my entire life. how someone can give so much kindness, even to those who don't deserve it, and how someone can have a heart so big it rivals the universe itself is beyond me. you might think your kindness is your weakness, but you couldn't be more wrong, love. to be kind is the greatest strength of all. there's not many who can stay kind in the face of all the pain thrown at them. to stay filled with love for those in this broken and dysfunctional world, is not naivety or innocence, it's purity. you're a fresh shower in this burning world. kindness such as yours is not a matter of the weak, and it's about time you see your strength for yourself.
+not to mention you're so incredibly intelligent (try to refuse i dare you I will punch your nose). i think you're my favourite person to read. everything you write is just filled with so much emotion that sometimes I feel like I'm the only one who can feel them to their full extent. there's just something about the way you carry your thoughts with your words that seems to resonate with me deeply, as though it were my own thoughts i was reading.
+you're also such a beautiful person. i mean ofc you're pretty, (when i first saw you irl i thought you looked like a Greek statue ehehe) but you're also very beautiful inside. I've never met someone who's so... graceful as a person. yes, you carry yourself very gracefully and I really love the way you speak but I'm not talking about that. im talking about the grace with how you handle life lately. you've been having betrayal after betrayal, disappointment after disappointment just thrown your way lately from everywhere.. friends, family.. but you handle it all so gracefully bro. there's no hatred, no malice, no grudges, no regret. something bad happens, and you focus on getting it out of your life and then healing yourself. ive known a version of you that would not go about it like this and would probably dwell on what went wrong and what could've been, but finally seeing you reach a point where you've matured enough to laugh at your problems and take care of yourself is a humongous deal. seeing you like this is absolutely beautiful bro. you're beautiful. and I'm so proud of you.
+so tell me bro, how can someone who is this strong, kind, compassionate, intelligent and beautiful ever come close to the label of being "worthless". are you out of your mind? those two words don't even belong in the same language together. i know my dumbass rant is not enough to get your mind off of whatever made you feel like this today, but just know that every word I've said has been nothing but honest. and if I was able to alleviate your doubts of self worth, even a little bit, i believe my rant strategy has proven to be successful hehehe. i love you soo much okay? even if you don't realise it, you're worth soo much to me, don't ever forget that. take care of yourself. byee <3. 
+
+Love, the living testament of your worth♡`
+    };
+
+    function prepareEnvelope(mood) {
+      selectedMood = mood;
+      document.getElementById('mood').classList.remove('active');
+      document.getElementById('envelopeScreen').classList.add('active');
+    }
+
+    function openEnvelope() {
+      document.querySelector('.envelope').classList.add('open');
+      setTimeout(() => {
+        document.getElementById('envelopeScreen').classList.remove('active');
+        document.getElementById('letterScreen').classList.add('active');
+        document.getElementById('letterContent').innerText = letters[selectedMood];
+      }, 1000);
+    }
+
+    function createSparkle() {
+      const sparkle = document.createElement('div');
+      sparkle.className = 'sparkle';
+      sparkle.style.left = Math.random() * 100 + 'vw';
+      sparkle.style.top = '-30px';
+      document.body.appendChild(sparkle);
+      setTimeout(() => sparkle.remove(), 3000);
+    }
+
+    setInterval(createSparkle, 400);
+  </script>
+</body>
+
+</html>
